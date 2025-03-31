@@ -45,17 +45,28 @@ World.add(world, [leftWall, rightWall, ground, topLine]);
 Render.run(render);
 Runner.run(engine);
 
+// 현재 과일 값을 저장하는 변수
+let currentBody = null;
+let currentFruit = null;
+
 // 과일을 추가하는 함수
 function addFruits(){
-    const fruits = FRUITS[0];
+    const index = Math.floor(Math.random() * 5);
+    const fruits = FRUITS[index];
+
     const body = Bodies.circle(300, 50, fruits.radius, 
         {
+            index: index,
+            isSleeping: true,
             render:{
                 sprite: {texture: `${fruits.name}.png`}
             },
             restitution: 0.4,
         });
 
+    // 현재 과일 값 저장
+    currentBody = body;
+    currentFruit = fruits;
     // 월드에 배치
     World.add(world, body);
 }
