@@ -5,7 +5,8 @@ var Engine  = Matter.Engine,
     Render  = Matter.Render, 
     Runner  = Matter.Runner, 
     Bodies  = Matter.Bodies, 
-    World   = Matter.World;
+    World   = Matter.World,
+    Body = Matter.Body;
 
 // 선언
 const engine = Engine.create();
@@ -48,6 +49,7 @@ Runner.run(engine);
 // 현재 과일 값을 저장하는 변수
 let currentBody = null;
 let currentFruit = null;
+let disableAction = false;
 
 // 과일을 추가하는 함수
 function addFruits(){
@@ -69,6 +71,36 @@ function addFruits(){
     currentFruit = fruits;
     // 월드에 배치
     World.add(world, body);
+}
+
+// 카보드 입력 받기
+window.onkeydown = (event) => {
+
+    if(disableAction) return;
+
+    switch(event.code){
+        case "KeyA":
+            Body.setPosition(currentBody, {
+                x: currentBody.position.x - 10,
+                y: currentBody.position.y
+            })
+            break;
+        case 'KeyD':
+            Body.setPosition(currentBody, {
+                x: currentBody.position.x + 10,
+                y: currentBody.position.y
+            })
+            break;
+        case 'Space':
+            currentBody.isSleeping = false;
+            disableAction = true;
+            // 지연시키는 함수
+            setTimeout(() => {
+                addFruits();
+                disableAction = false;
+            }, 1000);
+            break;
+    }
 }
 
 addFruits();
