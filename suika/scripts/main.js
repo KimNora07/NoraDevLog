@@ -6,7 +6,8 @@ var Engine  = Matter.Engine,
     Runner  = Matter.Runner, 
     Bodies  = Matter.Bodies, 
     World   = Matter.World,
-    Body = Matter.Body;
+    Body = Matter.Body,
+    Events = Matter.Events;
 
 // 선언
 const engine = Engine.create();
@@ -63,7 +64,7 @@ function addFruits(){
             render:{
                 sprite: {texture: `${fruits.name}.png`}
             },
-            restitution: 0.4,
+            restitution: 0.6,
         });
 
     // 현재 과일 값 저장
@@ -102,5 +103,28 @@ window.onkeydown = (event) => {
             break;
     }
 }
+
+Events.on(engine, "collisionStart", (event) => {
+    event.pairs.forEach((collision) => {
+        // 같은 과일일 경우
+        if(collision.bodyA.index == collision.bodyB.index){
+            const index = collision.bodyA.index;
+            if(index == FRUITS.length - 1) return;
+            World.remove(world, [collision.bodyA, collision.bodyB]);
+            const newFruit = FRUITS[index + 1];
+            const newBody = Bodies.circle
+            (
+                collision.collision.supports[0].x, 
+                collision.collision.supports[0].y, 
+                newFruit.radius,
+                {
+                    index: index + 1,
+                    render:{ sprite: {texture: `${newFruit.name}.png`}},
+                }
+            );
+            World.add(world, newBody);
+        }
+    })
+});
 
 addFruits();
