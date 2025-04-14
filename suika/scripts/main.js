@@ -37,6 +37,7 @@ const ground = Bodies.rectangle(310, 820, 620, 60, {
     render: { fillStyle: '#EA3680' }
 })
 const topLine = Bodies.rectangle(310, 150, 620, 2, {
+    name: "topLine",
     isStatic: true,
     isSensor: true,
     render: { fillStyle: '#EA3680' }
@@ -81,16 +82,20 @@ window.onkeydown = (event) => {
 
     switch(event.code){
         case "KeyA":
-            Body.setPosition(currentBody, {
-                x: currentBody.position.x - 10,
-                y: currentBody.position.y
-            })
+            if(currentBody.position.x - currentFruit.radius > 30){
+                Body.setPosition(currentBody, {
+                    x: currentBody.position.x - 10,
+                    y: currentBody.position.y
+                })
+            }
             break;
         case 'KeyD':
-            Body.setPosition(currentBody, {
-                x: currentBody.position.x + 10,
-                y: currentBody.position.y
-            })
+            if(currentBody.position.x + currentFruit.radius < 590){
+                Body.setPosition(currentBody, {
+                    x: currentBody.position.x + 10,
+                    y: currentBody.position.y
+                })
+            }
             break;
         case 'Space':
             currentBody.isSleeping = false;
@@ -99,7 +104,7 @@ window.onkeydown = (event) => {
             setTimeout(() => {
                 addFruits();
                 disableAction = false;
-            }, 1000);
+            }, 200);
             break;
     }
 }
@@ -123,6 +128,12 @@ Events.on(engine, "collisionStart", (event) => {
                 }
             );
             World.add(world, newBody);
+        }
+
+        // 게임 종료 조건 이벤트 생성
+        if(!disableAction && collision.bodyA.name === "topLine" || collision.bodyB.name === "topLine"){
+            alert("GameOver!");
+            disableAction = true;
         }
     })
 });
